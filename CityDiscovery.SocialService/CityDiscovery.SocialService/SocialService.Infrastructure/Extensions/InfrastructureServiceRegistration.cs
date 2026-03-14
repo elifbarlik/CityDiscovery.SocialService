@@ -20,7 +20,7 @@ namespace SocialService.Infrastructure.Extensions
             services.AddScoped<IImageService, LocalImageService>();
             services.AddHttpClient<IVenueServiceClient, VenueServiceClient>(client =>
             {
-                client.BaseAddress = new Uri("http://localhost:5001");
+                client.BaseAddress = new Uri("http://localhost:5275");
             });
 
             // HttpClient'ı ve IdentityServiceClient'ı kaydediyoruz.
