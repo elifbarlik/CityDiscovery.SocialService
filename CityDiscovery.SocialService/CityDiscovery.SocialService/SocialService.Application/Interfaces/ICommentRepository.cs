@@ -13,5 +13,6 @@ namespace SocialService.Application.Interfaces
         Task<List<PostComment>> GetByPostIdAsync(Guid postId);
         Task<PostComment> GetByIdAsync(Guid id);
         Task UpdateAuthorDetailsAsync(Guid userId, string newUserName, string? newAvatarUrl);
+        Task DeleteAsync(Guid id);
     }
 }

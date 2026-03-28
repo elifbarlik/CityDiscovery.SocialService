@@ -43,5 +43,15 @@ namespace SocialService.Infrastructure.Repositories
                     .SetProperty(c => c.AuthorUserName, newUserName)
                     .SetProperty(c => c.AuthorAvatarUrl, newAvatarUrl));
         }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var comment = await _context.PostComments.FindAsync(id);
+            if (comment != null)
+            {
+                _context.PostComments.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

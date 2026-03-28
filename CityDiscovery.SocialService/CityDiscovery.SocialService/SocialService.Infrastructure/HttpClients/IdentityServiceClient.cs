@@ -142,7 +142,10 @@ namespace SocialService.Infrastructure.HttpClients
                     var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
                     return users?.FirstOrDefault(); // Listeden ilk kullanıcıyı dön
                 }
-
+                
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[IdentityService HATA] Status: {response.StatusCode}, Detay: {errorContent}");
+                
                 return null;
             }
             catch

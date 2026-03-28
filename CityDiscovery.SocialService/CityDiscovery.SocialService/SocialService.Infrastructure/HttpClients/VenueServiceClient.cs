@@ -29,7 +29,8 @@ namespace SocialService.Infrastructure.HttpClients
                     // Mekan bulunamazsa null dön
                     return null;
                 }
-
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[VenueService HATA] Status: {response.StatusCode}, Detay: {errorContent}");
                 // Gelen veriyi DTO'ya çevir
                 return await response.Content.ReadFromJsonAsync<VenueDto>();
             }

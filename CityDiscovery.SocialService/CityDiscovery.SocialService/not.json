@@ -21,10 +21,10 @@
     "AccessTokenMinutes": 60
   },
   "ServiceUrls": {
-    "IdentityService": "http://localhost:5120",
-    "VenueService": "http://localhost:5275",
+    "IdentityService": "http://identity-service:80",
+    "VenueService": "http://venue-service:80",
     "ReviewService": "http://localhost:5066",
-    "SocialService": "http://localhost:5114"
+    "SocialService": "http://social-service:80"
   },
   "AllowedHosts": "*"
 }

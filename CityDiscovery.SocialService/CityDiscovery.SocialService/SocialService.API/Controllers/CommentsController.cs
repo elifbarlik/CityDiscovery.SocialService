@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialService.Application.Commands.AddComment;
+using SocialService.Application.Commands.DeleteComment;
 using SocialService.Application.DTOs;
 using SocialService.Application.Queries.GetComments;
 using System.Security.Claims;
@@ -90,6 +91,51 @@ namespace SocialService.API.Controllers
             var query = new GetCommentsQuery { PostId = postId };
             var comments = await _mediator.Send(query);
             return Ok(comments);
+        }
+
+        /// <summary>
+        /// Belirli bir yorumu siler
+        /// </summary>
+        /// <param name="postId">Gönderi ID'si (Route gereksinimi)</param>
+        /// <param name="commentId">Silinecek yorumun ID'si</param>
+        /// <response code="200">Yorum başarıyla silindi</response>
+        /// <response code="401">Yetkisiz işlem (Token geçersiz veya yorum başkasına ait)</response>
+        /// <response code="400">Geçersiz istek veya yorum bulunamadı</response>
+        [HttpDelete("{commentId}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteComment(Guid postId, Guid commentId)
+        {
+            try
+            {
+                // Token içerisinden kullanıcı ID'sini alıyoruz
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                               ?? User.FindFirst("sub")?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out Guid userId))
+                {
+                    return Unauthorized(new { error = "Kullanıcı kimliği doğrulanamadı." });
+                }
+
+                var command = new DeleteCommentCommand
+                {
+                    CommentId = commentId,
+                    UserId = userId
+                };
+
+                await _mediator.Send(command);
+
+                return Ok(new { message = "Yorum başarıyla silindi." });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }
