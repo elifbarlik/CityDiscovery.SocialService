@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SocialService.Application.Commands.LikePost;
+using SocialService.Application.Commands.UnlikePost;
+using SocialService.Application.DTOs;
+using SocialService.Application.Queries.GetPostLikes;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -88,6 +91,75 @@ namespace SocialService.API.Controllers
                     userId = userId,
                     isLiked = isLiked
                 });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Bir gönderideki beğeniyi kaldırır (Unlike)
+        /// </summary>
+        /// <param name="postId">Gönderi ID'si</param>
+        /// <response code="200">Beğeni başarıyla kaldırıldı</response>
+        /// <response code="400">Geçersiz istek</response>
+        /// <response code="401">Yetkilendirme hatası (Geçersiz Token)</response>
+        [HttpDelete]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UnlikePost(Guid postId)
+        {
+            try
+            {
+                // JWT token'dan UserId'yi alıyoruz
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                               ?? User.FindFirst("sub")?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out Guid userId))
+                {
+                    return Unauthorized(new { error = "Kullanıcı kimliği doğrulanamadı." });
+                }
+
+                var command = new UnlikePostCommand
+                {
+                    PostId = postId,
+                    UserId = userId
+                };
+
+                await _mediator.Send(command);
+
+                return Ok(new
+                {
+                    postId = postId,
+                    userId = userId,
+                    isLiked = false,
+                    message = "Beğeni kaldırıldı"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Bir gönderiye ait tüm beğenileri (beğenen kullanıcıların ID'leri ile birlikte) getirir
+        /// </summary>
+        /// <param name="postId">Gönderi ID'si</param>
+        /// <returns>Beğeni listesi</returns>
+        /// <response code="200">Beğeni listesi başarıyla getirildi</response>
+        [HttpGet("~/api/posts/{postId}/likes")]
+        [ProducesResponseType(typeof(List<LikeDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPostLikes(Guid postId)
+        {
+            try
+            {
+                var query = new GetPostLikesQuery { PostId = postId };
+                var likes = await _mediator.Send(query);
+
+                return Ok(likes);
             }
             catch (Exception ex)
             {

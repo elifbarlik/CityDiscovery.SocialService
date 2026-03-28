@@ -47,5 +47,12 @@ namespace SocialService.Infrastructure.Repositories
             return await _context.PostLikes
                 .CountAsync(l => l.PostId == postId);
         }
+        public async Task<List<PostLike>> GetByPostIdAsync(Guid postId)
+        {
+            return await _context.PostLikes
+                .Where(l => l.PostId == postId)
+                .OrderByDescending(l => l.LikedDate) // En son be?enenler en üstte görünsün
+                .ToListAsync();
+        }
     }
 }

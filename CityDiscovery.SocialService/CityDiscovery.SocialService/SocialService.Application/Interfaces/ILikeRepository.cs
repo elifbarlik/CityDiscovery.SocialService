@@ -14,5 +14,7 @@ namespace SocialService.Application.Interfaces
         Task RemoveAsync(PostLike like);
         Task<PostLike> GetByPostIdAndUserIdAsync(Guid postId, Guid userId);
         Task<int> GetCountByPostIdAsync(Guid postId);
+
+        Task<List<PostLike>> GetByPostIdAsync(Guid postId);
     }
 }
