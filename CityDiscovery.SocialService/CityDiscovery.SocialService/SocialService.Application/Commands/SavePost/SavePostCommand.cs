@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using System;
 
 namespace CityDiscovery.SocialService.SocialService.Application.Commands.SavePost
 {
-    internal class SavePostCommand
+    public class SavePostCommand : IRequest<bool>
     {
+        public Guid PostId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

@@ -10,5 +10,7 @@ namespace SocialService.Application.Interfaces
     public interface IPostSavedRepository
     {
         Task AddAsync(PostSaved postSaved);
+        Task<PostSaved> GetByPostAndUserAsync(Guid postId, Guid userId);
+        Task RemoveAsync(PostSaved postSaved);
     }
 }

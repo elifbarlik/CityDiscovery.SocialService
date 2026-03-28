@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using System;
 
 namespace SocialService.Application.Commands.UnsavePost
 {
-    internal class UnsavePostCommand
+    public class UnsavePostCommand : IRequest<bool>
     {
+        public Guid PostId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

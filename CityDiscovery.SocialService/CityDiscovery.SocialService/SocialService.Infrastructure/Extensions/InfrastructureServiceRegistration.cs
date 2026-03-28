@@ -18,6 +18,7 @@ namespace SocialService.Infrastructure.Extensions
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
             services.AddScoped<IImageService, LocalImageService>();
+            services.AddScoped<IPostSavedRepository, PostSavedRepository>();
             //services.AddHttpClient<IVenueServiceClient, VenueServiceClient>(client =>
             //{
             //    client.BaseAddress = new Uri("http://localhost:5275");
@@ -33,6 +34,7 @@ namespace SocialService.Infrastructure.Extensions
 
             // MessageBus'ı kaydediyoruz.
             services.AddScoped<IMessageBus, MessageBus>();
+
 
             return services;
         }

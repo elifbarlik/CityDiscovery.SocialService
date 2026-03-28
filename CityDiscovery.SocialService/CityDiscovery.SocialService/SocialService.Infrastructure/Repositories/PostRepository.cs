@@ -117,6 +117,30 @@ namespace SocialService.Infrastructure.Repositories
         }
 
 
+        public async Task<List<Post>> GetAllAsync()
+        {
+            return await _context.Posts
+                .Include(p => p.Comments)
+                .Include(p => p.Likes)
+                .Include(p => p.Photos)
+                .OrderByDescending(p => p.CreatedDate) // En yeniler en üstte
+                .ToListAsync();
+        }
+
+
+        // Kullanıcının bu postu daha önce kaydedip kaydetmediğini kontrol eder
+        public async Task<PostSaved> GetByPostAndUserAsync(Guid postId, Guid userId)
+        {
+            return await _context.PostSaveds
+                .FirstOrDefaultAsync(s => s.PostId == postId && s.UserId == userId);
+        }
+
+        // Kaydedilen postu favorilerden çıkarır
+        public async Task RemoveAsync(PostSaved postSaved)
+        {
+            _context.PostSaveds.Remove(postSaved);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }
